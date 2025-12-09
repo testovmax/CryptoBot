@@ -1,0 +1,3 @@
+/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles/crypto_bot.dir
+/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles/edit_cache.dir
+/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles/rebuild_cache.dir

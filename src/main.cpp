@@ -2,7 +2,10 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
-#include <chrono>
+#include <csignal>
+#include <atomic>
+
+
 
 
 std::string readBotToken() {
@@ -14,20 +17,12 @@ std::string readBotToken() {
         tokenFile.close();
         
         if (!token.empty()) {
-            std::cout << "✓ Токен прочитан из файла bot_token.txt\n";
+            std::cout << "Токен прочитан из файла bot_token.txt\n";
             return token;
         }
     }
     
     // Запрашиваем у пользователя
-    std::cout << "\n🤖 ТРЕБУЕТСЯ ТОКЕН TELEGRAM БОТА\n";
-    std::cout << "================================\n";
-    std::cout << "1. Откройте Telegram\n";
-    std::cout << "2. Найдите @BotFather\n";
-    std::cout << "3. Создайте бота командой /newbot\n";
-    std::cout << "4. Придумайте имя боту\n";
-    std::cout << "5. Скопируйте токен (выглядит так: 123456789:ABCdefGHIjklMNOpqrSTUvwxYZ)\n";
-    std::cout << "================================\n\n";
     
     std::string token;
     std::cout << "Введите токен бота: ";
@@ -44,19 +39,9 @@ std::string readBotToken() {
     return token;
 }
 
-void printConsoleCommands() {
-    std::cout << "\nКОМАНДЫ УПРАВЛЕНИЯ В КОНСОЛИ:\n";
-    std::cout << "===============================\n";
-    std::cout << "status  - Показать статус бота\n";
-    std::cout << "update  - Принудительно обновить цены\n";
-    std::cout << "alerts  - Проверить оповещения\n";
-    std::cout << "help    - Показать эту справку\n";
-    std::cout << "exit    - Выйти из программы\n";
-    std::cout << "===============================\n\n";
-}
-
-
 int main() {
+    
+    // Устанавливаем обработчик Ctrl+C
     
     std::string botToken = readBotToken();
     
@@ -66,28 +51,20 @@ int main() {
     }
     
     try {
-        std::cout << "\nИнициализация бота...\n";
+        std::cout << "\n⏳ Инициализация бота...\n";
         CryptoBot bot(botToken);
         
-        std::cout << "\nБОТ УСПЕШНО ИНИЦИАЛИЗИРОВАН!\n";
-        std::cout << "================================\n\n";
-        
-        printConsoleCommands();
-        
-        std::cout << "\nБОТ ЗАПУЩЕН И РАБОТАЕТ\n";
-        std::cout << "Для выхода введите 'exit' в консоли\n";
-        std::cout << "================================\n\n";
+        std::cout << "\n@CryptoLabuba_bot работает\n";
+
         
         // Запускаем главный цикл бота
         bot.run();
         
     } catch (const std::exception& e) {
-        std::cerr << "\nКРИТИЧЕСКАЯ ОШИБКА: " << e.what() << "\n";
+        std::cerr << "\nОШИБКА: " << e.what() << "\n";
         std::cerr << "Бот не может быть запущен.\n";
         return 1;
     }
-    
-    std::cout << "          РАБОТА БОТА ЗАВЕРШЕНА         \n";
-    
+
     return 0;
 }

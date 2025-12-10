@@ -6,6 +6,7 @@
 #include <map>
 #include <ctime>
 #include <mutex>
+#include <atomic>
 #include "CurrencyManager.hpp"
 #include "UserManager.hpp"
 #include "TelegramHandler.hpp"
@@ -30,11 +31,17 @@ private:
     std::vector<Alert> alerts;
     mutable std::mutex alertsMutex;
     
+    std::atomic<bool> running{true};
+    
+    static std::atomic<bool> stopRequested;
+    static void handleSignal(int signal);
+    
 public:
     CryptoBot(const std::string& token);
     
     // Основные методы
     void run();
+    void stop() { running = false; }
     
     // Обработка команд
     std::string processCommand(long userId, const std::string& command, 

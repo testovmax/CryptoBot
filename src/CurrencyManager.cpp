@@ -1,9 +1,11 @@
 #include "CurrencyManager.hpp"
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 #include <algorithm>
 #include <random>
 #include <ctime>
+#include <ios>
 
 CurrencyManager::CurrencyManager() {
     initializeCurrencies();
@@ -13,15 +15,19 @@ CurrencyManager::CurrencyManager() {
 void CurrencyManager::initializeCurrencies() {
     std::lock_guard<std::mutex> lock(mutex);
     
-    std::vector<std::pair<std::string, std::string>> cryptoList = {
-        {"BTC", "Bitcoin"}, {"ETH", "Ethereum"}, {"BNB", "Binance Coin"},
-        {"SOL", "Solana"}, {"ADA", "Cardano"}, {"XRP", "Ripple"},
-        {"DOGE", "Dogecoin"}, {"DOT", "Polkadot"}, {"LTC", "Litecoin"},
-        {"LINK", "Chainlink"}
+    // Используй ту же карту что и в generateMockPrice
+    std::map<std::string, std::pair<std::string, double>> cryptoMap = {
+        {"BTC", {"Bitcoin", 93353.0}},
+        {"ETH", {"Ethereum", 3395.35}},
+        {"BNB", {"Binance Coin", 904.38}},
+        {"SOL", {"Solana", 141.13}},
+        {"LTC", {"Litecoin", 86.39}},
+        {"LINK", {"Chainlink", 14.7}}
     };
     
-    for (const auto& [symbol, name] : cryptoList) {
-        currencies[symbol] = {symbol, name, 0.0, 0.0, "Never"};
+    for (const auto& [symbol, data] : cryptoMap) {
+        const auto& [name, price] = data;
+        currencies[symbol] = {symbol, name, price, 0.0, "Never"};
     }
 }
 
@@ -30,10 +36,10 @@ double CurrencyManager::generateMockPrice(const std::string& symbol) {
     static std::mt19937 gen(rd());
     
     std::map<std::string, double> basePrices = {
-        {"BTC", 45000.0}, {"ETH", 2500.0}, {"BNB", 300.0},
-        {"SOL", 100.0}, {"ADA", 0.5}, {"XRP", 0.5},
-        {"DOGE", 0.08}, {"DOT", 7.0}, {"LTC", 70.0},
-        {"LINK", 14.0}
+        {"BTC", 93353.0}, {"ETH", 3395.35}, {"BNB", 904.38}, 
+        {"SOL", 141.13},
+         {"LTC", 86.39},
+        {"LINK", 14.7}
     };
     
     if (basePrices.find(symbol) != basePrices.end()) {
@@ -81,8 +87,13 @@ void CurrencyManager::updatePrices() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
     
+    // Обновляем только существующие валюты, не добавляем новые
     for (auto& [symbol, currency] : currencies) {
-        currency.price = generateMockPrice(symbol);
+        double newPrice = generateMockPrice(symbol);
+        // Проверяем, что цена разумная (не слишком маленькая)
+        if (newPrice > 0.01) {
+            currency.price = newPrice;
+        }
         
         std::uniform_real_distribution<> dis(-10.0, 15.0);
         currency.change24h = dis(gen);
@@ -122,12 +133,35 @@ std::string CurrencyManager::formatCurrencyList() const {
     int index = 1;
     for (const auto& [symbol, currency] : currencies) {
         ss << index << ". " << currency.name << " (" << symbol << ")\n";
-        ss << "   Цена: $" << std::fixed << std::setprecision(2) << currency.price;
+        ss << "   Цена: USD ";
         
-        if (currency.change24h >= 0) {
-            ss << " 📈 +" << std::fixed << std::setprecision(2) << currency.change24h << "%";
+        // Форматируем цену с правильной точностью
+        // Используем отдельный stringstream для каждого значения
+        std::stringstream priceStream;
+        priceStream << std::fixed;
+        if (currency.price < 1.0) {
+            priceStream << std::setprecision(4) << currency.price;
         } else {
-            ss << " 📉 " << std::fixed << std::setprecision(2) << currency.change24h << "%";
+            priceStream << std::setprecision(2) << currency.price;
+        }
+        std::string priceStr = priceStream.str();
+        // Убираем ведущие нули перед точкой (например, "07.73" -> "7.73", "00.40" -> "0.40")
+        while (priceStr.length() > 2 && priceStr[0] == '0' && priceStr[1] != '.') {
+            priceStr = priceStr.substr(1);
+        }
+        // Исправляем ".11" -> "0.11"
+        if (priceStr.length() > 0 && priceStr[0] == '.') {
+            priceStr = "0" + priceStr;
+        }
+        ss << priceStr;
+        
+        // Форматируем изменение за 24ч
+        std::stringstream changeStream;
+        changeStream << std::fixed << std::setprecision(2) << currency.change24h;
+        if (currency.change24h >= 0) {
+            ss << " 📈 +" << changeStream.str() << "%";
+        } else {
+            ss << " 📉 " << changeStream.str() << "%";
         }
         
         ss << "\n\n";
@@ -152,21 +186,28 @@ std::string CurrencyManager::formatCurrencyInfo(const std::string& symbol) {
     
     std::stringstream ss;
     ss << "💰 " << currency.name << " (" << currency.symbol << ")\n\n";
-    ss << "Цена: $" << std::fixed << std::setprecision(2) << currency.price << "\n";
-    ss << "Изменение 24ч: ";
+    ss << "💵 Цена: USD ";
+    if (currency.price < 1.0) {
+        ss << std::fixed << std::setprecision(4) << currency.price;
+    } else {
+        ss << std::fixed << std::setprecision(2) << currency.price;
+    }
+    ss << "\n";
+    ss << "📈 Изменение за 24ч: ";
     
     if (currency.change24h >= 0) {
-        ss << "📈 +" << std::fixed << std::setprecision(2) << currency.change24h << "%\n";
+        ss << "🟢 +" << std::fixed << std::setprecision(2) << currency.change24h << "%\n";
     } else {
-        ss << "📉 " << std::fixed << std::setprecision(2) << currency.change24h << "%\n";
+        ss << "🔴 " << std::fixed << std::setprecision(2) << currency.change24h << "%\n";
     }
     
-    ss << "\nПримерно:\n";
-    ss << std::fixed << std::setprecision(0) << (currency.price * 75) << " RUB\n";
-    ss << std::fixed << std::setprecision(0) << (currency.price * 0.85) << " EUR\n";
-    ss << std::fixed << std::setprecision(0) << (currency.price * 420) << " KZT\n";
+    ss << "\n🌍 В других валютах:\n";
+    ss << "• " << std::fixed << std::setprecision(0) << (currency.price * 75) << " RUB\n";
+    ss << "• " << std::fixed << std::setprecision(0) << (currency.price * 0.85) << " EUR\n";
+    ss << "• " << std::fixed << std::setprecision(0) << (currency.price * 420) << " KZT\n";
+    ss << "• " << std::fixed << std::setprecision(0) << (currency.price * 27.8) << " UAH\n";
     
-    ss << "\nОбновлено: " << currency.lastUpdated;
+    ss << "\n⏰ Обновлено: " << currency.lastUpdated;
     
     return ss.str();
 }

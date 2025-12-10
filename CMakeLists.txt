@@ -17,9 +17,14 @@ set(SOURCES
 add_executable(crypto_bot ${SOURCES})
 
 # Настройки компилятора
-target_compile_options(crypto_bot PRIVATE -Wall -Wextra)
+target_compile_options(crypto_bot PRIVATE -Wall -Wextra -pedantic)
 
-# Подключаем JSON библиотеку (заголовочный файл)
+# Пути для заголовков
 target_include_directories(crypto_bot PRIVATE src)
 
-message("Сборка КриптоБота")
+# Информация о сборке
+message("========================================")
+message("КриптоБот - Telegram Only версия")
+message("Управление: только через Telegram")
+message("Выход: Ctrl+C в терминале")
+message("========================================")

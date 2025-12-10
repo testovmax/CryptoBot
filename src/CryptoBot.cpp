@@ -38,43 +38,23 @@ CryptoBot::CryptoBot(const std::string& token) : telegram(token) {
 void CryptoBot::run() {
     std::cout << "🚀 Запуск бота...\n";
     
-    bool running = true;
-    time_t lastPriceUpdate = time(nullptr);
+    // Инициализация
+    currencies.updatePrices();
     
-    std::cout << "🟢 Бот активен. Ожидание сообщений...\n";
+    std::cout << "Бот активен. Ожидание сообщений из Telegram...\n";
     
     while (running) {
-        // Обработка сообщений
+        // 1. Обработка сообщений из Telegram
         processMessages();
         
-        // Автоматические задачи
+        // 2. Автоматические задачи (обновление цен, проверка алертов)
         autoTasks();
         
-        // // Проверка ввода из консоли
-        // if (std::cin.peek() != EOF) {
-        //     std::string command;
-        //     std::getline(std::cin, command);
-            
-        //     if (command == "exit" || command == "quit") {
-        //         running = false;
-        //         std::cout << "Завершение работы...\n";
-        //         break;
-        //     } else if (command == "status") {
-        //         std::cout << "\n📊 Статус:\n";
-        //         std::cout << "Пользователей: " << users.getTotalUsers() << "\n";
-        //         std::cout << "Валют: " << currencies.getCurrencyCount() << "\n";
-        //         std::cout << "Оповещений: " << alerts.size() << "\n";
-        //     } else if (command == "update") {
-        //         currencies.updatePrices();
-        //         std::cout << "✅ Цены обновлены\n";
-        //     } else if (command == "alerts") {
-        //         checkAlerts();
-        //     }
-        // }
-        
-        // Небольшая пауза
+        // 3. Минимальная пауза для CPU
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+    
+    std::cout << "\nЗавершение работы бота...\n";
 }
 
 void CryptoBot::processMessages() {
@@ -97,13 +77,13 @@ void CryptoBot::autoTasks() {
     time_t now = time(nullptr);
     
     // Обновление цен каждую минуту
-    if (difftime(now, lastPriceUpdate) >= 30) {
+    if (difftime(now, lastPriceUpdate) >= 60) {
         currencies.updatePrices();
         lastPriceUpdate = now;
     }
     
     // Проверка оповещений каждые 30 секунд
-    if (difftime(now, lastAlertCheck) >= 10) {
+    if (difftime(now, lastAlertCheck) >= 30) {
         checkAlerts();
         lastAlertCheck = now;
     }

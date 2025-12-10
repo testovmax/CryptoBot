@@ -4,6 +4,8 @@
 #include <memory>
 #include <array>
 #include <json.hpp>
+#include <cctype>
+#include <cstdio>
 
 using json = nlohmann::json;
 
@@ -101,9 +103,22 @@ void TelegramHandler::sendMessage(long chatId, const std::string& text) {
         else escapedText += c;
     }
     
+    // URL-кодируем текст для безопасной передачи
+    std::string urlEncodedText;
+    for (unsigned char c : escapedText) {
+        if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            urlEncodedText += c;
+        } else if (c == ' ') {
+            urlEncodedText += '+';
+        } else {
+            char hex[4];
+            std::sprintf(hex, "%%%02X", c);
+            urlEncodedText += hex;
+        }
+    }
+    
     std::string data = "chat_id=" + std::to_string(chatId) + 
-                      "&text=" + escapedText + 
-                      "&parse_mode=HTML";
+                      "&text=" + urlEncodedText;
     
     sendRequest("sendMessage", data);
     
@@ -170,11 +185,5 @@ std::string TelegramHandler::getHelpText() {
 }
 
 std::string TelegramHandler::getWelcomeText(const std::string& name) {
-    return "👋 Привет, " + name + "!\n\n"
-           "🤖 Добро пожаловать в КриптоБот!\n\n"
-           "Я помогу отслеживать курсы криптовалют,\n"
-           "конвертировать валюты и устанавливать\n"
-           "оповещения о ценах.\n\n"
-           "Используйте /help для списка команд\n"
-           "Начните с /list чтобы увидеть валюты";
+    return "👋 Привет, " + name + "!\n Добро пожаловать в КриптоБот \n Используйте /help для списка команд\n";
 }

@@ -3,6 +3,7 @@
 #include <sstream>
 #include <memory>
 #include <array>
+#include <algorithm>
 #include <json.hpp>
 #include <cctype>
 #include <cstdio>
@@ -49,6 +50,8 @@ std::vector<TelegramMessage> TelegramHandler::getMessages() {
     
     if (lastUpdateId > 0) {
         cmd += "?offset=" + std::to_string(lastUpdateId + 1);
+    } else {
+        cmd += "?offset=0";
     }
     
     cmd += "&timeout=2";
@@ -62,10 +65,21 @@ std::vector<TelegramMessage> TelegramHandler::getMessages() {
         
         if (!j["ok"].get<bool>()) return messages;
         
+        // Обрабатываем обновления и обновляем lastUpdateId для ВСЕХ обновлений
+        long maxUpdateId = lastUpdateId;
+        
         for (const auto& update : j["result"]) {
             long updateId = update["update_id"].get<long>();
-            lastUpdateId = updateId;
             
+            // Пропускаем уже обработанные обновления
+            if (updateId <= lastUpdateId) {
+                continue;
+            }
+            
+            // Обновляем maxUpdateId для ВСЕХ обновлений (даже без текста)
+            maxUpdateId = std::max(maxUpdateId, updateId);
+            
+            // Обрабатываем только текстовые сообщения
             if (!update.contains("message") || !update["message"].contains("text")) {
                 continue;
             }
@@ -82,7 +96,13 @@ std::vector<TelegramMessage> TelegramHandler::getMessages() {
             messages.emplace_back(chatId, text, username);
             
             std::cout << "📨 Сообщение от " << chatId 
-                      << "(@" << username << "): " << text << std::endl;
+                      << "(@" << username << "): " << text << " (update_id: " << updateId << ")\n";
+        }
+        
+        // ВАЖНО: Обновляем lastUpdateId для ВСЕХ обработанных обновлений
+        // Это гарантирует, что они не вернутся при следующем запросе
+        if (maxUpdateId > lastUpdateId) {
+            lastUpdateId = maxUpdateId;
         }
         
     } catch (const std::exception& e) {
@@ -94,33 +114,16 @@ std::vector<TelegramMessage> TelegramHandler::getMessages() {
 
 void TelegramHandler::sendMessage(long chatId, const std::string& text) {
     std::cout << "⚡ Отправляю ответ пользователю " << chatId << "...\n";
-    // Экранируем кавычки
-    std::string escapedText;
-    for (char c : text) {
-        if (c == '\"') escapedText += "\\\"";
-        else if (c == '\'') escapedText += "'\\''";
-        else if (c == '`') escapedText += "\\`";
-        else escapedText += c;
-    }
+    std::cout << "DEBUG: Длина сообщения: " << text.length() << " символов\n";
+    std::cout << "DEBUG: Первые 100 символов: " << text.substr(0, std::min(100UL, text.length())) << "\n";
     
-    // URL-кодируем текст для безопасной передачи
-    std::string urlEncodedText;
-    for (unsigned char c : escapedText) {
-        if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
-            urlEncodedText += c;
-        } else if (c == ' ') {
-            urlEncodedText += '+';
-        } else {
-            char hex[4];
-            std::sprintf(hex, "%%%02X", c);
-            urlEncodedText += hex;
-        }
-    }
+    // Используем curl с --data-urlencode для правильного URL-кодирования
+    std::string url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
+    std::string cmd = "curl -s -X POST \"" + url + "\"";
+    cmd += " -d \"chat_id=" + std::to_string(chatId) + "\"";
+    cmd += " --data-urlencode \"text=" + text + "\"";
     
-    std::string data = "chat_id=" + std::to_string(chatId) + 
-                      "&text=" + urlEncodedText;
-    
-    sendRequest("sendMessage", data);
+    execCommand(cmd);
     
     std::cout << "✅ Отправлено " << chatId << ": " 
               << (text.length() > 50 ? text.substr(0, 50) + "..." : text) 

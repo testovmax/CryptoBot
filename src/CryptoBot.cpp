@@ -2,9 +2,11 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <string>
 #include <algorithm>
 #include <thread>
 #include <chrono>
+#include <ctime>
 
 Alert::Alert(long uid, const std::string& c, double price, bool above)
     : userId(uid), crypto(c), targetPrice(price), isAbove(above), 
@@ -12,8 +14,10 @@ Alert::Alert(long uid, const std::string& c, double price, bool above)
 
 std::string Alert::getDescription() const {
     std::stringstream ss;
+    ss.precision(2);
+    ss << std::fixed;
     ss << crypto << " " << (isAbove ? "выше" : "ниже") 
-       << " $" << std::fixed << std::setprecision(2) << targetPrice;
+       << " $" << targetPrice;
     return ss.str();
 }
 
@@ -63,7 +67,9 @@ void CryptoBot::processMessages() {
     for (const auto& msg : messages) {
         try {
             std::string response = processCommand(msg.chatId, msg.text, msg.username);
-            telegram.sendMessage(msg.chatId, response);
+            if (!response.empty()) {
+                telegram.sendMessage(msg.chatId, response);
+            }
         } catch (const std::exception& e) {
             std::cerr << "❌ Ошибка: " << e.what() << std::endl;
             telegram.sendMessage(msg.chatId, "❌ Произошла ошибка");
@@ -126,7 +132,12 @@ std::string CryptoBot::processCommand(long userId, const std::string& command,
         return TelegramHandler::getHelpText();
     }
     else if (commandName == "list") {
-        return currencies.formatCurrencyList();
+        std::cerr << "DEBUG: Вызов formatCurrencyList()\n";
+        std::cerr << "DEBUG: Количество валют: " << currencies.getCurrencyCount() << "\n";
+        std::string result = currencies.formatCurrencyList();
+        std::cerr << "DEBUG: Длина результата: " << result.length() << "\n";
+        std::cerr << "DEBUG: Первые 200 символов: " << result.substr(0, std::min(200UL, result.length())) << "\n";
+        return result;
     }
     else if (commandName == "price") {
         if (args.empty()) return "Укажите символ валюты: /price BTC";
@@ -187,6 +198,10 @@ std::string CryptoBot::processCommand(long userId, const std::string& command,
         
         if (price <= 0) return "❌ Цена должна быть положительной";
         
+        std::cout << "DEBUG: Создание оповещения: " << symbol 
+                  << " " << (condition == "above" ? "above" : "below") 
+                  << " $" << price << std::endl;
+        
         addAlert(userId, symbol, price, condition == "above");
         users.addFavorite(userId, symbol);
         
@@ -194,9 +209,11 @@ std::string CryptoBot::processCommand(long userId, const std::string& command,
         
         std::stringstream response;
         response << "✅ Оповещение создано!\n\n";
+        response.precision(2);
+        response << std::fixed;
         response << symbol << " " << (condition == "above" ? "выше" : "ниже") 
-                 << " $" << std::fixed << std::setprecision(2) << price << "\n";
-        response << "Текущая цена: $" << std::fixed << std::setprecision(2) << currency.price;
+                 << " $" << price << "\n";
+        response << "Текущая цена: $" << currency.price;
         
         return response.str();
     }
@@ -228,11 +245,17 @@ void CryptoBot::addAlert(long userId, const std::string& crypto, double price, b
             return a.userId == userId && a.crypto == crypto;
         }), alerts.end());
     
-    alerts.emplace_back(userId, crypto, price, isAbove);
+    // Явно создаем Alert, чтобы убедиться, что параметры передаются правильно
+    Alert newAlert(userId, crypto, price, isAbove);
+    alerts.push_back(newAlert);
     
-    std::cout << "🔔 Создано оповещение: " << userId 
-              << " - " << crypto << " " << (isAbove ? ">" : "<") 
-              << " $" << price << std::endl;
+    // Проверяем, что цена сохранилась правильно
+    if (!alerts.empty()) {
+        const Alert& lastAlert = alerts.back();
+        std::cout << "🔔 Создано оповещение: " << userId 
+                  << " - " << crypto << " " << (isAbove ? ">" : "<") 
+                  << " $" << price << " (сохранено: $" << lastAlert.targetPrice << ")" << std::endl;
+    }
 }
 
 void CryptoBot::checkAlerts() {
@@ -255,13 +278,19 @@ void CryptoBot::checkAlerts() {
             triggeredAlerts.push_back(*it);
             
             std::stringstream ss;
+            ss.precision(2);
+            ss << std::fixed;
             ss << "🔔 ОПОВЕЩЕНИЕ СРАБОТАЛО!\n\n";
             ss << it->getDescription() << "\n\n";
-            ss << "Текущая цена: $" << std::fixed << std::setprecision(2) << currency.price << "\n";
-            ss << "Целевая цена: $" << std::fixed << std::setprecision(2) << it->targetPrice << "\n\n";
+            ss << "Текущая цена: $" << currency.price << "\n";
+            ss << "Целевая цена: $" << it->targetPrice << "\n\n";
             
             double difference = std::abs(currency.price - it->targetPrice);
-            ss << "Разница: $" << std::fixed << std::setprecision(2) << difference;
+            ss << "Разница: $" << difference;
+            
+            std::cout << "DEBUG: Сработало оповещение для " << it->crypto 
+                      << ", targetPrice=" << it->targetPrice 
+                      << ", currentPrice=" << currency.price << std::endl;
             
             telegram.sendMessage(it->userId, ss.str());
             

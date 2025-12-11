@@ -2,6 +2,10 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+#include <string>
+#include <map>
+#include <vector>
+#include <mutex>
 #include <algorithm>
 #include <random>
 #include <ctime>
@@ -50,7 +54,7 @@ double CurrencyManager::generateMockPrice(const std::string& symbol) {
     return 100.0;
 }
 
-Currency CurrencyManager::getCurrency(const std::string& symbol)const {
+Currency CurrencyManager::getCurrency(const std::string& symbol) const {
     std::lock_guard<std::mutex> lock(mutex);
     std::string sym = symbol;
     std::transform(sym.begin(), sym.end(), sym.begin(), ::toupper);
@@ -126,6 +130,16 @@ double CurrencyManager::convert(double amount, const std::string& from,
 
 std::string CurrencyManager::formatCurrencyList() const {
     std::lock_guard<std::mutex> lock(mutex);
+    
+    // Защита от использования старого кода - проверяем количество валют
+    if (currencies.size() != 6) {
+        std::cerr << "ERROR: Неправильное количество валют: " << currencies.size() << " (ожидается 6)\n";
+        std::cerr << "Валюты: ";
+        for (const auto& [symbol, currency] : currencies) {
+            std::cerr << symbol << " ";
+        }
+        std::cerr << "\n";
+    }
     
     std::stringstream ss;
     ss << "📊 Доступные криптовалюты:\n\n";

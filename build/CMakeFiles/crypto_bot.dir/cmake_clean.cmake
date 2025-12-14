@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o.d"
   "CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o"
   "CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o.d"
+  "CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o"
+  "CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o.d"
   "CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o"
   "CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o.d"
   "CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o"

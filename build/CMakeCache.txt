@@ -145,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=CryptoBotCourse
+CMAKE_PROJECT_NAME:STATIC=CryptoBot
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -209,18 +209,6 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//The directory containing a CMake configuration file for CURL.
-CURL_DIR:PATH=CURL_DIR-NOTFOUND
-
-//Path to a file.
-CURL_INCLUDE_DIR:PATH=/usr/include/x86_64-linux-gnu
-
-//Path to a library.
-CURL_LIBRARY_DEBUG:FILEPATH=CURL_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-CURL_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libcurl.so
-
 //Value Computed by CMake
 CryptoBotCourse_BINARY_DIR:STATIC=/mnt/c/prj/VoGU_course_2/CryptoBot/build
 
@@ -231,15 +219,6 @@ CryptoBotCourse_IS_TOP_LEVEL:STATIC=ON
 CryptoBotCourse_SOURCE_DIR:STATIC=/mnt/c/prj/VoGU_course_2/CryptoBot
 
 //Value Computed by CMake
-CryptoBotReal_BINARY_DIR:STATIC=/mnt/c/prj/VoGU_course_2/CryptoBot/build
-
-//Value Computed by CMake
-CryptoBotReal_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-CryptoBotReal_SOURCE_DIR:STATIC=/mnt/c/prj/VoGU_course_2/CryptoBot
-
-//Value Computed by CMake
 CryptoBot_BINARY_DIR:STATIC=/mnt/c/prj/VoGU_course_2/CryptoBot/build
 
 //Value Computed by CMake
@@ -247,12 +226,6 @@ CryptoBot_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 CryptoBot_SOURCE_DIR:STATIC=/mnt/c/prj/VoGU_course_2/CryptoBot
-
-//Arguments to supply to pkg-config
-PKG_CONFIG_ARGN:STRING=
-
-//pkg-config executable
-PKG_CONFIG_EXECUTABLE:FILEPATH=PKG_CONFIG_EXECUTABLE-NOTFOUND
 
 
 ########################
@@ -402,18 +375,4 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_DIR
-CURL_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_INCLUDE_DIR
-CURL_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_LIBRARY_DEBUG
-CURL_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_LIBRARY_RELEASE
-CURL_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//Details about finding CURL
-FIND_PACKAGE_MESSAGE_DETAILS_CURL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcurl.so][/usr/include/x86_64-linux-gnu][c ][v7.81.0()]
-//ADVANCED property for variable: PKG_CONFIG_ARGN
-PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
-PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 

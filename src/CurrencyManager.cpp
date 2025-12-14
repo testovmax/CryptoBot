@@ -2,21 +2,36 @@
 #include "CurrencyManager.hpp"
 #include <sstream>
 #include <iomanip>
-#include <random>
+#include <thread>
+#include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include "json.hpp"  
+#include <iostream>
 
+using json = nlohmann::json;
 
-std::mt19937 CurrencyManager::gen(std::random_device{}());
-
-const inline std::map<std::string, double> BASE_PRICES = {
-    {"BTC", 93353.0},
-    {"ETH", 3395.35},
-    {"BNB", 904.38},
-    {"SOL", 141.13},
-    {"LTC", 86.39},
-    {"LINK", 14.7}
+// ID валют на CoinGecko
+static const std::map<std::string, std::string> COINGECKO_IDS = {
+    {"BTC", "bitcoin"},
+    {"ETH", "ethereum"},
+    {"BNB", "binancecoin"},
+    {"SOL", "solana"},
+    {"LTC", "litecoin"},
+    {"LINK", "chainlink"}
 };
+
+// Вспомогательная функция для выполнения команды
+static std::string execCommand(const std::string& cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+    if (!pipe) return result;
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
 
 Currency::Currency(const std::string& s, const std::string& n, double p, double c, const std::string& l)
     : symbol(s), name(n), price(p), change24h(c), lastUpdated(l) {}
@@ -27,11 +42,15 @@ CurrencyManager::CurrencyManager() {
 
 void CurrencyManager::initializeCurrencies() {
     std::lock_guard<std::mutex> lock(mutex);
-    for (const auto& [symbol, price] : BASE_PRICES) {
-        time_t now = time(nullptr);
-        char timeStr[10];
-        std::strftime(timeStr, sizeof(timeStr), "%H:%M", std::localtime(&now));
-        currencies[symbol] = {symbol, getCurrencyName(symbol), price, 0.0, timeStr};
+    for (const auto& [symbol, name] : {
+        std::make_pair("BTC", "Bitcoin"),
+        std::make_pair("ETH", "Ethereum"),
+        std::make_pair("BNB", "Binance Coin"),
+        std::make_pair("SOL", "Solana"),
+        std::make_pair("LTC", "Litecoin"),
+        std::make_pair("LINK", "Chainlink")
+    }) {
+        currencies[symbol] = {symbol, name, 0.0, 0.0, "—"};
     }
 }
 
@@ -48,29 +67,67 @@ std::string CurrencyManager::getCurrencyName(const std::string& symbol) const {
     return (it != names.end()) ? it->second : "Unknown";
 }
 
-double CurrencyManager::generateMockPrice(const std::string& symbol) {
-    auto it = BASE_PRICES.find(symbol);
-    if (it != BASE_PRICES.end()) {
-        std::uniform_real_distribution<> dis(-0.02, 0.03);
-        return it->second * (1.0 + dis(gen));  // ✅ gen доступен
-    }
-    return 100.0;
-}
-
 void CurrencyManager::updatePrices() {
     std::lock_guard<std::mutex> lock(mutex);
-    for (auto& [symbol, currency] : currencies) {
-        double newPrice = generateMockPrice(symbol);
-        if (newPrice > 0.01) {
-            currency.price = newPrice;
-        }
-        std::uniform_real_distribution<> dis(-10.0, 15.0);
-        currency.change24h = dis(gen);
 
-        time_t now = time(nullptr);
-        char timeStr[10];
-        std::strftime(timeStr, sizeof(timeStr), "%H:%M", std::localtime(&now));
-        currency.lastUpdated = timeStr;
+    std::string ids;
+    for (const auto& [symbol, id] : COINGECKO_IDS) {
+        if (!ids.empty()) ids += ",";
+        ids += id;
+    }
+
+    std::string url = "https://api.coingecko.com/api/v3/simple/price?ids=" + ids +
+                      "&vs_currencies=usd&include_24hr_change=true";
+
+    std::string cmd = "curl -s -m 10 \"" + url + "\"";
+    std::string response = execCommand(cmd);
+
+    std::cout << "\n🔍 [updatePrices] URL: " << url << "\n";
+    std::cout << "📥 [updatePrices] Response: " << (response.empty() ? "(пусто)" : response) << "\n";
+
+    try {
+        json j = json::parse(response);
+
+        std::cout << "✅ [updatePrices] JSON успешно распаршен\n";
+
+        for (auto& [symbol, currency] : currencies) {
+            auto it = COINGECKO_IDS.find(symbol);
+            if (it == COINGECKO_IDS.end()) {
+                std::cout << "🟡 [updatePrices] Нет CoinGecko ID для: " << symbol << "\n";
+                continue;
+            }
+
+            std::string id = it->second;
+            std::cout << "📡 [updatePrices] Ищем: " << id << "\n";
+
+            if (j.contains(id)) {
+                auto& data = j[id];
+                std::cout << "📥 [updatePrices] Найдено: " << id << " → " << data.dump() << "\n";
+
+                if (data.contains("usd")) {
+                    double price = data["usd"].get<double>();
+                    currency.price = price;
+                    std::cout << "📊 [updatePrices] Установлена цена " << symbol << " = " << price << "\n";
+                } else {
+                    std::cout << "❌ [updatePrices] Нет поля 'usd' в " << id << "\n";
+                }
+
+                if (data.contains("usd_24h_change")) {
+                    currency.change24h = data["usd_24h_change"].get<double>();
+                }
+            } else {
+                std::cout << "❌ [updatePrices] Не найдено в ответе: " << id << "\n";
+            }
+
+            time_t now = time(nullptr);
+            char timeStr[10];
+            std::strftime(timeStr, sizeof(timeStr), "%H:%M", std::localtime(&now));
+            currency.lastUpdated = timeStr;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cout << "❌ [updatePrices] JSON Parse Error: " << e.what() << "\n";
+        std::cout << "Raw: " << response << "\n";
     }
 }
 
@@ -155,7 +212,7 @@ std::string CurrencyManager::formatConversion(double amount, const std::string& 
     const auto getFiatRate = [](const std::string& fiat) -> double {
         static const std::map<std::string, double> rates = {
             {"USD", 1.0}, {"RUB", 75.0}, {"EUR", 0.85},
-            {"KZT", 420.0}, {"UAH", 27.8}
+            {"KZT", 420.0}
         };
         auto it = rates.find(fiat);
         return (it != rates.end()) ? it->second : -1.0;

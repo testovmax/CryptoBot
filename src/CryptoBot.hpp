@@ -13,6 +13,8 @@
 #include "UserManager.hpp"
 #include "TelegramHandler.hpp"
 #include "HistoryLogger.hpp"
+#include "json.hpp"
+using json = nlohmann::json;
 
 struct Alert {
     long userId;
@@ -56,4 +58,7 @@ public:
     CryptoBot(const std::string& token);
     void run();
     static void handleSignal(int signal);
+    void loadState();
+    void saveState() const;
+
 };

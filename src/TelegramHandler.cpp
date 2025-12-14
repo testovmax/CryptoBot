@@ -1,13 +1,17 @@
+// src/TelegramHandler.cpp
 #include "TelegramHandler.hpp"
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
 #include <thread>
-#include <algorithm>  
+#include <algorithm>
 
+// Конструктор — обязателен!
+TelegramHandler::TelegramHandler(const std::string& token)
+    : botToken(token), lastUpdateId(0) {}
 
 std::string TelegramHandler::execCommand(const std::string& cmd) {
-    std::array<char, 128> buffer;
+    std::array<char, 1024> buffer;
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
     if (!pipe) return result;
@@ -51,7 +55,7 @@ std::vector<Message> TelegramHandler::getMessages() {
         }
     }
     catch (const std::exception&) {
-        // Молча игнорируем ошибку парсинга (можно добавить лог в файл, если нужно)
+        // Игнорируем ошибку парсинга
     }
 
     return messages;

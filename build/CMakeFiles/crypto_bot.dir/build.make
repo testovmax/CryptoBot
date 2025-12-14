@@ -69,24 +69,10 @@ include CMakeFiles/crypto_bot.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/crypto_bot.dir/flags.make
 
-CMakeFiles/crypto_bot.dir/src/main.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
-CMakeFiles/crypto_bot.dir/src/main.cpp.o: ../src/main.cpp
-CMakeFiles/crypto_bot.dir/src/main.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/crypto_bot.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/main.cpp.o -MF CMakeFiles/crypto_bot.dir/src/main.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/main.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp
-
-CMakeFiles/crypto_bot.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/crypto_bot.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp > CMakeFiles/crypto_bot.dir/src/main.cpp.i
-
-CMakeFiles/crypto_bot.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp -o CMakeFiles/crypto_bot.dir/src/main.cpp.s
-
 CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
 CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o: ../src/CryptoBot.cpp
 CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o -MF CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/CryptoBot.cpp
 
 CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.i: cmake_force
@@ -100,7 +86,7 @@ CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.s: cmake_force
 CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
 CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o: ../src/CurrencyManager.cpp
 CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o -MF CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/CurrencyManager.cpp
 
 CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.i: cmake_force
@@ -111,24 +97,24 @@ CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/CurrencyManager.cpp -o CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.s
 
-CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
-CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o: ../src/UserManager.cpp
-CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o -MF CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp
+CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
+CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o: ../src/HistoryLogger.cpp
+CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o -MF CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/HistoryLogger.cpp
 
-CMakeFiles/crypto_bot.dir/src/UserManager.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/crypto_bot.dir/src/UserManager.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp > CMakeFiles/crypto_bot.dir/src/UserManager.cpp.i
+CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/prj/VoGU_course_2/CryptoBot/src/HistoryLogger.cpp > CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.i
 
-CMakeFiles/crypto_bot.dir/src/UserManager.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/UserManager.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp -o CMakeFiles/crypto_bot.dir/src/UserManager.cpp.s
+CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/HistoryLogger.cpp -o CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.s
 
 CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
 CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o: ../src/TelegramHandler.cpp
 CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o -MF CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/TelegramHandler.cpp
 
 CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.i: cmake_force
@@ -139,25 +125,55 @@ CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/TelegramHandler.cpp -o CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.s
 
+CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
+CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o: ../src/UserManager.cpp
+CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o -MF CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp
+
+CMakeFiles/crypto_bot.dir/src/UserManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/crypto_bot.dir/src/UserManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp > CMakeFiles/crypto_bot.dir/src/UserManager.cpp.i
+
+CMakeFiles/crypto_bot.dir/src/UserManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/UserManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp -o CMakeFiles/crypto_bot.dir/src/UserManager.cpp.s
+
+CMakeFiles/crypto_bot.dir/src/main.cpp.o: CMakeFiles/crypto_bot.dir/flags.make
+CMakeFiles/crypto_bot.dir/src/main.cpp.o: ../src/main.cpp
+CMakeFiles/crypto_bot.dir/src/main.cpp.o: CMakeFiles/crypto_bot.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/crypto_bot.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/crypto_bot.dir/src/main.cpp.o -MF CMakeFiles/crypto_bot.dir/src/main.cpp.o.d -o CMakeFiles/crypto_bot.dir/src/main.cpp.o -c /mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp
+
+CMakeFiles/crypto_bot.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/crypto_bot.dir/src/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp > CMakeFiles/crypto_bot.dir/src/main.cpp.i
+
+CMakeFiles/crypto_bot.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/crypto_bot.dir/src/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp -o CMakeFiles/crypto_bot.dir/src/main.cpp.s
+
 # Object files for target crypto_bot
 crypto_bot_OBJECTS = \
-"CMakeFiles/crypto_bot.dir/src/main.cpp.o" \
 "CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o" \
 "CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o" \
+"CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o" \
+"CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o" \
 "CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o" \
-"CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o"
+"CMakeFiles/crypto_bot.dir/src/main.cpp.o"
 
 # External object files for target crypto_bot
 crypto_bot_EXTERNAL_OBJECTS =
 
-crypto_bot: CMakeFiles/crypto_bot.dir/src/main.cpp.o
 crypto_bot: CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o
 crypto_bot: CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o
-crypto_bot: CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o
+crypto_bot: CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o
 crypto_bot: CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o
+crypto_bot: CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o
+crypto_bot: CMakeFiles/crypto_bot.dir/src/main.cpp.o
 crypto_bot: CMakeFiles/crypto_bot.dir/build.make
 crypto_bot: CMakeFiles/crypto_bot.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable crypto_bot"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/prj/VoGU_course_2/CryptoBot/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable crypto_bot"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/crypto_bot.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

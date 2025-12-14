@@ -177,6 +177,30 @@ src/CurrencyManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/crypto_bot.dir/build.make CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.s
 .PHONY : src/CurrencyManager.cpp.s
 
+src/HistoryLogger.o: src/HistoryLogger.cpp.o
+.PHONY : src/HistoryLogger.o
+
+# target to build an object file
+src/HistoryLogger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/crypto_bot.dir/build.make CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o
+.PHONY : src/HistoryLogger.cpp.o
+
+src/HistoryLogger.i: src/HistoryLogger.cpp.i
+.PHONY : src/HistoryLogger.i
+
+# target to preprocess a source file
+src/HistoryLogger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/crypto_bot.dir/build.make CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.i
+.PHONY : src/HistoryLogger.cpp.i
+
+src/HistoryLogger.s: src/HistoryLogger.cpp.s
+.PHONY : src/HistoryLogger.s
+
+# target to generate assembly for a file
+src/HistoryLogger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/crypto_bot.dir/build.make CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.s
+.PHONY : src/HistoryLogger.cpp.s
+
 src/TelegramHandler.o: src/TelegramHandler.cpp.o
 .PHONY : src/TelegramHandler.o
 
@@ -264,6 +288,9 @@ help:
 	@echo "... src/CurrencyManager.o"
 	@echo "... src/CurrencyManager.i"
 	@echo "... src/CurrencyManager.s"
+	@echo "... src/HistoryLogger.o"
+	@echo "... src/HistoryLogger.i"
+	@echo "... src/HistoryLogger.s"
 	@echo "... src/TelegramHandler.o"
 	@echo "... src/TelegramHandler.i"
 	@echo "... src/TelegramHandler.s"

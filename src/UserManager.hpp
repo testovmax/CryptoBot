@@ -29,4 +29,5 @@ public:
     void addFavorite(long userId, const std::string& symbol);
     std::string getUserStats(long userId) const;
     std::string getStats() const;
+    std::map<long, UserData> getUsers() const;
 };

@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/mnt/c/prj/VoGU_course_2/CryptoBot/src/CryptoBot.cpp" "CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o" "gcc" "CMakeFiles/crypto_bot.dir/src/CryptoBot.cpp.o.d"
   "/mnt/c/prj/VoGU_course_2/CryptoBot/src/CurrencyManager.cpp" "CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o" "gcc" "CMakeFiles/crypto_bot.dir/src/CurrencyManager.cpp.o.d"
+  "/mnt/c/prj/VoGU_course_2/CryptoBot/src/HistoryLogger.cpp" "CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o" "gcc" "CMakeFiles/crypto_bot.dir/src/HistoryLogger.cpp.o.d"
   "/mnt/c/prj/VoGU_course_2/CryptoBot/src/TelegramHandler.cpp" "CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o" "gcc" "CMakeFiles/crypto_bot.dir/src/TelegramHandler.cpp.o.d"
   "/mnt/c/prj/VoGU_course_2/CryptoBot/src/UserManager.cpp" "CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o" "gcc" "CMakeFiles/crypto_bot.dir/src/UserManager.cpp.o.d"
   "/mnt/c/prj/VoGU_course_2/CryptoBot/src/main.cpp" "CMakeFiles/crypto_bot.dir/src/main.cpp.o" "gcc" "CMakeFiles/crypto_bot.dir/src/main.cpp.o.d"

@@ -61,3 +61,8 @@ std::string UserManager::getStats() const {
     ss << "Пользователей: " << users.size();
     return ss.str();
 }
+
+std::map<long, UserManager::UserData> UserManager::getUsers() const {
+    std::lock_guard<std::mutex> lock(mutex);
+    return users;
+}

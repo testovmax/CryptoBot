@@ -8,6 +8,8 @@
 #include <chrono>
 #include <csignal>
 #include <fstream>
+#include "json.hpp"
+using json = nlohmann::json;
 
 std::atomic<bool> CryptoBot::stopRequested{false};
 std::mutex CryptoBot::coutMutex;
@@ -27,11 +29,16 @@ void CryptoBot::run() {
     std::cout << "🚀 Запуск бота...\n";
     std::cout << "@CryptoLabuba_bot работает\n\n";
 
+    loadState();
+    currencies.updatePrices();
+
     while (!stopRequested) {
         processMessages();
         autoTasks();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+    saveState(); 
+    std::cout << "💾 Состояние сохранено в state.json\n";
 }
 
 void CryptoBot::processMessages() {
@@ -266,4 +273,88 @@ std::string CryptoBot::readBotToken() {
         }
     }
     return token;
+}
+
+void CryptoBot::saveState() const {
+    json j;
+
+    // Сохраняем алерты
+    for (const auto& alert : alerts) {
+        json jAlert;
+        jAlert["userId"] = alert.userId;
+        jAlert["crypto"] = alert.crypto;
+        jAlert["targetPrice"] = alert.targetPrice;
+        jAlert["isAbove"] = alert.isAbove;
+        jAlert["createdAt"] = alert.createdAt;
+        j["alerts"].push_back(jAlert);
+    }
+
+    // Сохраняем пользователей
+    for (const auto& [id, data] : users.getUsers()) {  
+        json jUser;
+        jUser["username"] = data.username;
+        jUser["commandCount"] = data.commandCount;
+        jUser["favorites"] = data.favorites;
+        jUser["firstSeen"] = data.firstSeen;
+        j["users"][std::to_string(id)] = jUser;
+    }
+
+    // Записываем в файл
+    std::ofstream file("state.json");
+    if (file.is_open()) {
+        file << j.dump(2);  // красивый JSON
+        file.close();
+    }
+}
+
+void CryptoBot::loadState() {
+    std::ifstream file("state.json");
+    if (!file.is_open()) return;
+
+    json j;
+    try {
+        file >> j;
+        file.close();
+    } catch (const std::exception&) {
+        return;
+    }
+
+if (j.contains("alerts")) {
+    std::lock_guard<std::mutex> lock(alertsMutex);
+    alerts.clear();
+    for (const auto& jAlert : j["alerts"]) {
+    long userId = jAlert.value("userId", 0L);
+    std::string crypto = jAlert.value("crypto", "");
+    double targetPrice = jAlert.value("targetPrice", 0.0);
+    bool isAbove = jAlert.value("isAbove", false);
+    time_t createdAt = jAlert.value("createdAt", time(nullptr));
+
+    if (userId != 0 && !crypto.empty()) {
+        alerts.emplace_back(userId, crypto, targetPrice, isAbove);  
+        alerts.back().createdAt = createdAt;                        
+    }
+}
+}
+
+    // Загружаем пользователей
+    if (j.contains("users")) {
+        for (const auto& [idStr, jUser] : j["users"].items()) {
+            long id = std::stol(idStr);
+            std::string username = jUser.value("username", "unknown");
+            int commandCount = jUser.value("commandCount", 0);
+            std::set<std::string> favorites;
+            if (jUser.contains("favorites")) {
+                for (const auto& fav : jUser["favorites"]) {
+                    favorites.insert(fav.get<std::string>());
+                }
+            }
+            time_t firstSeen = jUser.value("firstSeen", time(nullptr));
+
+            users.createUser(id, username);
+            users.recordCommand(id);
+            for (const auto& fav : favorites) {
+                users.addFavorite(id, fav);
+            }
+        }
+    }
 }

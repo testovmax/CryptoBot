@@ -2,6 +2,7 @@
 #include <iostream>
 #include <csignal> 
 
+
 int main() {
     signal(SIGINT, CryptoBot::handleSignal);
     signal(SIGTERM, CryptoBot::handleSignal);

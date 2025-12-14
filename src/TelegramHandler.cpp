@@ -1,172 +1,76 @@
 #include "TelegramHandler.hpp"
-#include <iostream>
 #include <sstream>
-#include <memory>
-#include <array>
-#include <algorithm>
-#include <json.hpp>
-#include <cctype>
-#include <cstdio>
+#include <iomanip>
+#include <cstdlib>
+#include <thread>
+#include <algorithm>  
 
-using json = nlohmann::json;
 
-std::string TelegramHandler::execCommand(const std::string& cmd) const {
+std::string TelegramHandler::execCommand(const std::string& cmd) {
     std::array<char, 128> buffer;
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
-    
-    if (!pipe) return "";
-    
+    if (!pipe) return result;
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
         result += buffer.data();
     }
-    
     return result;
 }
 
-std::string TelegramHandler::sendRequest(const std::string& method, 
-                                        const std::string& data) const {
-    std::string url = "https://api.telegram.org/bot" + botToken + "/" + method;
-    std::string cmd = "curl -s -X POST \"" + url + "\"";
-    
-    if (!data.empty()) {
-        cmd += " -d \"" + data + "\"";
-    }
-    
-    return execCommand(cmd);
-}
-
-TelegramHandler::TelegramHandler(const std::string& token) 
-    : botToken(token), lastUpdateId(0) {
-    
-    std::cout << "🤖 Telegram обработчик инициализирован\n";
-}
-
-std::vector<TelegramMessage> TelegramHandler::getMessages() {
-    std::vector<TelegramMessage> messages;
-    
+std::vector<Message> TelegramHandler::getMessages() {
+    std::vector<Message> messages;
     std::string url = "https://api.telegram.org/bot" + botToken + "/getUpdates";
-    std::string cmd = "curl -s \"" + url + "\"";
-    
-    if (lastUpdateId > 0) {
-        cmd += "?offset=" + std::to_string(lastUpdateId + 1);
-    } else {
-        cmd += "?offset=0";
-    }
-    
-    cmd += "&timeout=2";
-    
+    std::string offset = "?offset=" + std::to_string(lastUpdateId + 1);
+    std::string limit = "&limit=100";
+    std::string timeout = "&timeout=30";
+    std::string cmd = "curl -s -X GET \"" + url + offset + limit + timeout + "\"";
+
     std::string response = execCommand(cmd);
-    
-    if (response.empty()) return messages;
-    
+
     try {
         json j = json::parse(response);
-        
-        if (!j["ok"].get<bool>()) return messages;
-        
-        // Обрабатываем обновления и обновляем lastUpdateId для ВСЕХ обновлений
-        long maxUpdateId = lastUpdateId;
-        
-        for (const auto& update : j["result"]) {
-            long updateId = update["update_id"].get<long>();
-            
-            // Пропускаем уже обработанные обновления
-            if (updateId <= lastUpdateId) {
-                continue;
-            }
-            
-            // Обновляем maxUpdateId для ВСЕХ обновлений (даже без текста)
-            maxUpdateId = std::max(maxUpdateId, updateId);
-            
-            // Обрабатываем только текстовые сообщения
-            if (!update.contains("message") || !update["message"].contains("text")) {
-                continue;
-            }
-            
-            const auto& msg = update["message"];
-            long chatId = msg["chat"]["id"].get<long>();
-            std::string text = msg["text"].get<std::string>();
-            
-            std::string username = "";
-            if (msg.contains("from") && msg["from"].contains("username")) {
-                username = msg["from"]["username"].get<std::string>();
-            }
-            
-            messages.emplace_back(chatId, text, username);
-            
-            std::cout << "📨 Сообщение от " << chatId 
-                      << "(@" << username << "): " << text << " (update_id: " << updateId << ")\n";
+
+        if (!j.contains("ok") || !j["ok"]) {
+            return messages;
         }
-        
-        // ВАЖНО: Обновляем lastUpdateId для ВСЕХ обработанных обновлений
-        // Это гарантирует, что они не вернутся при следующем запросе
-        if (maxUpdateId > lastUpdateId) {
-            lastUpdateId = maxUpdateId;
+
+        if (!j.contains("result")) return messages;
+
+        for (const auto& item : j["result"]) {
+            if (item.contains("message")) {
+                const auto& msg = item["message"];
+                long chatId = msg["chat"].value("id", 0L);
+                std::string text = msg.value("text", "");
+                std::string username = msg["from"].value("username", "");
+                long messageId = msg.value("message_id", 0L);
+                long updateId = item.value("update_id", 0L);
+
+                messages.push_back({chatId, text, username, messageId});
+                lastUpdateId = std::max(lastUpdateId, updateId);
+            }
         }
-        
-    } catch (const std::exception& e) {
-        std::cerr << "Ошибка парсинга: " << e.what() << std::endl;
     }
-    
+    catch (const std::exception&) {
+        // Молча игнорируем ошибку парсинга (можно добавить лог в файл, если нужно)
+    }
+
     return messages;
 }
 
 void TelegramHandler::sendMessage(long chatId, const std::string& text) {
-    std::cout << "⚡ Отправляю ответ пользователю " << chatId << "...\n";
-    std::cout << "DEBUG: Длина сообщения: " << text.length() << " символов\n";
-    std::cout << "DEBUG: Первые 100 символов: " << text.substr(0, std::min(100UL, text.length())) << "\n";
-    
-    // Используем curl с --data-urlencode для правильного URL-кодирования
     std::string url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
     std::string cmd = "curl -s -X POST \"" + url + "\"";
     cmd += " -d \"chat_id=" + std::to_string(chatId) + "\"";
     cmd += " --data-urlencode \"text=" + text + "\"";
-    
     execCommand(cmd);
-    
-    std::cout << "✅ Отправлено " << chatId << ": " 
-              << (text.length() > 50 ? text.substr(0, 50) + "..." : text) 
-              << std::endl;
 }
 
-std::string TelegramHandler::getBotInfo() const {
-    std::string response = sendRequest("getMe");
-    
-    if (response.empty()) {
-        return "Информация о боте недоступна";
-    }
-    
-    try {
-        json j = json::parse(response);
-        if (j["ok"].get<bool>()) {
-            const auto& botInfo = j["result"];
-            std::stringstream ss;
-            ss << "🤖 Бот: " << botInfo["first_name"].get<std::string>() << "\n";
-            ss << "Username: @" << botInfo["username"].get<std::string>() << "\n";
-            ss << "ID: " << botInfo["id"].get<long>();
-            return ss.str();
-        }
-    } catch (...) {
-        // ignore
-    }
-    
-    return "Информация о боте недоступна";
-}
-
-bool TelegramHandler::testConnection() const {
-    std::string response = sendRequest("getMe");
-    
-    if (response.empty()) {
-        return false;
-    }
-    
-    try {
-        json j = json::parse(response);
-        return j["ok"].get<bool>();
-    } catch (...) {
-        return false;
-    }
+std::string TelegramHandler::getWelcomeText(const std::string& name) {
+    std::stringstream ss;
+    ss << "Привет, " << name << "! 👋\n";
+    ss << "Я — CryptoBot, ваш помощник в мире криптовалют.\n\n";
+    ss << "Используй /help, чтобы посмотреть список команд.";
+    return ss.str();
 }
 
 std::string TelegramHandler::getHelpText() {
@@ -185,8 +89,4 @@ std::string TelegramHandler::getHelpText() {
            "/price BTC\n"
            "/convert 1 BTC to USD\n"
            "/alert ETH below 3000";
-}
-
-std::string TelegramHandler::getWelcomeText(const std::string& name) {
-    return "👋 Привет, " + name + "!\n Добро пожаловать в КриптоБот \n Используйте /help для списка команд\n";
 }

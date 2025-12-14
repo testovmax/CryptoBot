@@ -1,10 +1,9 @@
-#ifndef CURRENCY_MANAGER_HPP
-#define CURRENCY_MANAGER_HPP
+#pragma once
 
 #include <string>
-#include <vector>
 #include <map>
 #include <mutex>
+#include <random>
 
 struct Currency {
     std::string symbol;
@@ -12,38 +11,29 @@ struct Currency {
     double price;
     double change24h;
     std::string lastUpdated;
+
+    Currency() = default;
+    Currency(const std::string& s, const std::string& n, double p, double c, const std::string& l);
 };
 
 class CurrencyManager {
 private:
     std::map<std::string, Currency> currencies;
     mutable std::mutex mutex;
-    
-    void initializeCurrencies();
+
+    std::string getCurrencyName(const std::string& symbol) const;
     double generateMockPrice(const std::string& symbol);
-    
+    static std::mt19937 gen;
+
 public:
     CurrencyManager();
-    
-    // Получение данных
-    Currency getCurrency(const std::string& symbol)const;
-    std::vector<Currency> getAllCurrencies() const;
-    bool currencyExists(const std::string& symbol) const;
-    
-    // Обновление цен
+    void initializeCurrencies();
     void updatePrices();
-    
-    // Конвертация
-    double convert(double amount, const std::string& from, const std::string& to) const;
-    
-    // Форматирование
-    std::string formatCurrencyList() const;
-    std::string formatCurrencyInfo(const std::string& symbol);
-    std::string formatConversion(double amount, const std::string& from, 
-                                const std::string& to) const;
-    
-    // Статистика
+    bool currencyExists(const std::string& symbol) const;
+    Currency getCurrency(const std::string& symbol) const;
     int getCurrencyCount() const;
-};
 
-#endif
+    std::string formatCurrencyList() const;
+    std::string formatCurrencyInfo(const std::string& symbol) const;
+    std::string formatConversion(double amount, const std::string& from, const std::string& to) const;
+};

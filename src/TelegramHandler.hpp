@@ -1,42 +1,33 @@
-#ifndef TELEGRAM_HANDLER_HPP
-#define TELEGRAM_HANDLER_HPP
+// src/TelegramHandler.hpp
+#pragma once
 
 #include <string>
 #include <vector>
-#include <map>
 
-struct TelegramMessage {
+#include "json.hpp"
+
+using json = nlohmann::json;
+
+struct Message {
     long chatId;
     std::string text;
     std::string username;
-    
-    TelegramMessage(long id = 0, const std::string& txt = "", 
-                   const std::string& user = "")
-        : chatId(id), text(txt), username(user) {}
+    long messageId;
 };
 
 class TelegramHandler {
 private:
     std::string botToken;
     long lastUpdateId;
-    
-    std::string execCommand(const std::string& cmd) const;
-    std::string sendRequest(const std::string& method, const std::string& data = "") const;
-    
+
+    std::string execCommand(const std::string& cmd);
+    std::string extractJsonField(const std::string& json, const std::string& field);
+
 public:
     TelegramHandler(const std::string& token);
-    
-    // Работа с сообщениями
-    std::vector<TelegramMessage> getMessages();
+    std::vector<Message> getMessages();
     void sendMessage(long chatId, const std::string& text);
-    
-    // Информация
-    std::string getBotInfo() const;
-    bool testConnection() const;
-    
-    // Вспомогательные методы
-    static std::string getHelpText();
-    static std::string getWelcomeText(const std::string& name);
-};
 
-#endif
+    static std::string getWelcomeText(const std::string& name);
+    static std::string getHelpText();
+};

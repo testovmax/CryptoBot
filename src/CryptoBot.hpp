@@ -1,15 +1,18 @@
-#ifndef CRYPTOBOT_HPP
-#define CRYPTOBOT_HPP
+#pragma once
 
 #include <string>
 #include <vector>
 #include <map>
-#include <ctime>
 #include <mutex>
 #include <atomic>
+#include <sstream>
+#include <iomanip>
+#include <ctime>
+
 #include "CurrencyManager.hpp"
 #include "UserManager.hpp"
 #include "TelegramHandler.hpp"
+#include "HistoryLogger.hpp"
 
 struct Alert {
     long userId;
@@ -17,46 +20,40 @@ struct Alert {
     double targetPrice;
     bool isAbove;
     time_t createdAt;
-    
-    Alert(long uid = 0, const std::string& c = "", double price = 0, bool above = true);
-    std::string getDescription() const;
-    bool shouldTrigger(double currentPrice) const;
+
+    Alert(long uid, const std::string& c, double price, bool above);
+
+    bool shouldTrigger(double currentPrice) const {
+        return isAbove ? currentPrice >= targetPrice : currentPrice <= targetPrice;
+    }
 };
 
 class CryptoBot {
 private:
+    std::string botToken;
     TelegramHandler telegram;
     CurrencyManager currencies;
     UserManager users;
+    HistoryLogger logger;
+
     std::vector<Alert> alerts;
     mutable std::mutex alertsMutex;
-    
-    std::atomic<bool> running{true};
-    
+
     static std::atomic<bool> stopRequested;
-    static void handleSignal(int signal);
-    
-public:
-    CryptoBot(const std::string& token);
-    
-    // Основные методы
-    void run();
-    void stop() { running = false; }
-    
-    // Обработка команд
-    std::string processCommand(long userId, const std::string& command, 
-                              const std::string& username = "");
-    
-    // Оповещения
-    void addAlert(long userId, const std::string& crypto, double price, bool isAbove);
-    void checkAlerts();
-    
-    // Форматирование
-    std::string formatAlerts(long userId) const;
-    
-private:
+    static std::mutex coutMutex;
+
     void processMessages();
     void autoTasks();
-};
+    void checkAlerts();
+    void addAlert(long userId, const std::string& crypto, double price, bool isAbove);
+    std::string formatAlerts(long userId) const;
+    
+    std::string processCommand(long userId, const std::string& command, const std::string& username);
 
-#endif
+
+public:
+    static std::string readBotToken();
+    CryptoBot(const std::string& token);
+    void run();
+    static void handleSignal(int signal);
+};

@@ -1,23 +1,16 @@
-cmake_minimum_required(VERSION 3.10)
-project(CryptoBotCourse)
+cmake_minimum_required(VERSION 3.14)
+project(CryptoBot CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Исходные файлы
-set(SOURCES
-    src/main.cpp
-    src/CryptoBot.cpp
-    src/CurrencyManager.cpp
-    src/UserManager.cpp
-    src/TelegramHandler.cpp
-)
+# Источники
+file(GLOB_RECURSE SOURCES src/*.cpp)
 
-# Создаем исполняемый файл
 add_executable(crypto_bot ${SOURCES})
 
-# Настройки компилятора
-target_compile_options(crypto_bot PRIVATE -Wall -Wextra -pedantic)
-
-# Пути для заголовков
-target_include_directories(crypto_bot PRIVATE src)
+# Под Windows: используем pthread
+if(WIN32)
+    target_link_libraries(crypto_bot pthread)
+endif()

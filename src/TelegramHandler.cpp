@@ -85,12 +85,12 @@ std::string TelegramHandler::getHelpText() {
            "/list - Список криптовалют\n"
            "/price [СИМВОЛ] - Цена валюты\n"
            "/convert [СУММА] [ИЗ] to [В] - Конвертация\n"
-           "/alert [СИМВОЛ] [above/below] [ЦЕНА] - Оповещение\n"
+           "/alert [СИМВОЛ] [>/<] [ЦЕНА] - Оповещение\n"
            "/myalerts - Мои оповещения\n"
            "/mystats - Моя статистика\n"
            "/stats - Статистика бота\n\n"
            "Примеры:\n"
            "/price BTC\n"
            "/convert 1 BTC to USD\n"
-           "/alert ETH below 3000";
+           "/alert ETH < 3000";
 }

@@ -118,15 +118,15 @@ std::string CryptoBot::processCommand(long userId, const std::string& command, c
     }
     else if (commandName == "alert") {
         if (args.size() < 3) {
-            return "❌ Недостаточно аргументов\nФормат: /alert [символ] [above/below] [цена]";
+            return "❌ Недостаточно аргументов\nФормат: /alert [символ] [>/<] [цена]";
         }
         std::string symbol = args[0];
         std::string condition = args[1];
         std::string priceStr = args[2];
 
         std::transform(condition.begin(), condition.end(), condition.begin(), ::tolower);
-        if (condition != "above" && condition != "below") {
-            return "❌ Условие должно быть 'above' или 'below'";
+        if (condition != ">" && condition != "<") {
+            return "❌ Условие должно быть '>' или '<'";
         }
 
         if (!currencies.currencyExists(symbol)) {
